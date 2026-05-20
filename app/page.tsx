@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TradingViewWidget from "./TradingViewWidget";
+//import TradingViewWidget from "./TradingViewWidget";
 
 import {
   Search,
@@ -10,16 +10,56 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+type WatchlistItem = {
+  label: string;
+  tradingview: string;
+};
+
 export default function Home() {
 
+  const watchlist: WatchlistItem[] = [
+    {
+      label: "BANKNIFTY",
+      tradingview: "NIFTYBANK",
+    },
+    {
+      label: "NIFTY",
+      tradingview: "NIFTY",
+    },
+    {
+      label: "RELIANCE",
+      tradingview: "RELIANCE",
+    },
+    {
+      label: "HDFCBANK",
+      tradingview: "HDFCBANK",
+    },
+    {
+      label: "INFY",
+      tradingview: "INFY",
+    },
+    {
+      label: "TCS",
+      tradingview: "TCS",
+    },
+    {
+      label: "SBIN",
+      tradingview: "SBIN",
+    },
+    {
+      label: "ICICIBANK",
+      tradingview: "ICICIBANK",
+    },
+  ];
+
   const [selectedSymbol, setSelectedSymbol] =
-  useState({
-    label: "BANKNIFTY",
-    tradingview: "NIFTYBANK",
-  });
+    useState<WatchlistItem>({
+      label: "BANKNIFTY",
+      tradingview: "NIFTYBANK",
+    });
 
   const [timeframe, setTimeframe] =
-    useState("5m");
+    useState("5");
 
   const [price, setPrice] =
     useState(55820);
@@ -28,7 +68,7 @@ export default function Home() {
     useState({
       trend: "Bullish",
       action:
-        "Wait for breakout above 55880",
+        "Wait for breakout above resistance",
       risk: "Moderate",
       setup: "55800 CE ATM",
       confidence: 74,
@@ -40,17 +80,6 @@ export default function Home() {
       ],
     });
 
-  const watchlist = [
-    "BANKNIFTY",
-    "NIFTY",
-    "RELIANCE",
-    "HDFCBANK",
-    "INFY",
-    "TCS",
-    "SBIN",
-    "ICICIBANK",
-  ];
-
   useEffect(() => {
 
     const interval = setInterval(() => {
@@ -59,56 +88,61 @@ export default function Home() {
         +(prev + (Math.random() * 30 - 15)).toFixed(2)
       );
 
-      const trends = [
-        "Bullish",
-        "Bearish",
-        "Neutral",
+      const marketStates = [
+        {
+          trend: "Bullish",
+          action:
+            "Wait for breakout above resistance",
+          setup: "ATM CE",
+          risk: "Moderate",
+          reasoning: [
+            "Price holding above VWAP",
+            "RSI strengthening",
+            "Momentum stable",
+            "Buyers defending support",
+          ],
+        },
+
+        {
+          trend: "Bearish",
+          action:
+            "Avoid fresh longs below VWAP",
+          setup: "ATM PE",
+          risk: "High",
+          reasoning: [
+            "Price below VWAP",
+            "Weak momentum structure",
+            "Selling pressure increasing",
+            "Resistance holding strongly",
+          ],
+        },
+
+        {
+          trend: "Neutral",
+          action:
+            "Wait for clearer directional move",
+          setup: "No clean setup",
+          risk: "Low",
+          reasoning: [
+            "Range-bound structure",
+            "Momentum weakening",
+            "Volume below average",
+            "No breakout confirmation",
+          ],
+        },
       ];
 
-      const actions = [
-        "Wait for breakout above resistance",
-        "Avoid fresh longs near resistance",
-        "Momentum improving gradually",
-        "Wait for volume confirmation",
-        "Weak structure below VWAP",
-      ];
-
-      const setups = [
-        "55800 CE ATM",
-        "55900 CE OTM",
-        "55700 PE ATM",
-        "No clean setup",
-      ];
+      const selectedState =
+        marketStates[
+          Math.floor(
+            Math.random() * marketStates.length
+          )
+        ];
 
       setAnalysis({
-        trend:
-          trends[
-            Math.floor(Math.random() * trends.length)
-          ],
-
-        action:
-          actions[
-            Math.floor(Math.random() * actions.length)
-          ],
-
-        risk: ["Low", "Moderate", "High"][
-          Math.floor(Math.random() * 3)
-        ],
-
-        setup:
-          setups[
-            Math.floor(Math.random() * setups.length)
-          ],
-
+        ...selectedState,
         confidence:
-          Math.floor(Math.random() * 20) + 70,
-
-        reasoning: [
-          "Price holding above VWAP",
-          "RSI strengthening gradually",
-          "Momentum stable near support",
-          "Volume below breakout threshold",
-        ],
+          Math.floor(Math.random() * 15) + 70,
       });
 
     }, 8000);
@@ -160,12 +194,13 @@ export default function Home() {
             {watchlist.map((symbol) => (
 
               <button
-                key={symbol}
+                key={symbol.label}
                 onClick={() =>
                   setSelectedSymbol(symbol)
                 }
                 className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
-                  selectedSymbol.label === symbol.label
+                  selectedSymbol.label ===
+                  symbol.label
                     ? "bg-[#1a2335] border border-blue-500/30"
                     : "hover:bg-white/5"
                 }`}
@@ -174,7 +209,7 @@ export default function Home() {
                 <div className="flex items-center justify-between">
 
                   <span className="font-medium">
-                    {symbol}
+                    {symbol.label}
                   </span>
 
                   <span className="text-green-400 text-sm">
@@ -236,11 +271,11 @@ export default function Home() {
               className="bg-[#1a2335] border border-white/5 rounded-lg px-4 py-2 text-sm outline-none"
             >
 
-              <option>1m</option>
-              <option>5m</option>
-              <option>15m</option>
-              <option>1H</option>
-              <option>1D</option>
+              <option value="1">1m</option>
+              <option value="5">5m</option>
+              <option value="15">15m</option>
+              <option value="60">1H</option>
+              <option value="D">1D</option>
 
             </select>
 
@@ -265,10 +300,21 @@ export default function Home() {
 
             <div className="h-full rounded-2xl overflow-hidden border border-white/5 bg-[#111827]">
 
-            <TradingViewWidget
-  symbol={selectedSymbol.tradingview}
-  interval={timeframe}
-/>
+            <div className="w-full h-full flex items-center justify-center bg-[#111827]">
+
+<div className="text-center">
+
+  <h2 className="text-3xl font-semibold mb-4">
+    {selectedSymbol.label}
+  </h2>
+
+  <p className="text-zinc-400">
+    Live chart loading temporarily disabled
+  </p>
+
+</div>
+
+</div>
 
             </div>
 
