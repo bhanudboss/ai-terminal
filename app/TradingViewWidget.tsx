@@ -2,20 +2,12 @@
 
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    TradingView: any;
-  }
-}
-
 interface Props {
   symbol: string;
-  
 }
 
 export default function TradingViewWidget({
   symbol,
-  interval,
 }: Props) {
 
   const containerRef =
@@ -23,44 +15,64 @@ export default function TradingViewWidget({
 
   useEffect(() => {
 
-    containerRef.current!.innerHTML = "";
+    if (!containerRef.current) return;
+
+    containerRef.current.innerHTML = "";
 
     const script =
       document.createElement("script");
 
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
 
     script.type = "text/javascript";
 
     script.async = true;
 
     script.innerHTML = JSON.stringify({
-      autosize: true,
-      symbol: `NSE:${symbol}`,
-      interval,
-      timezone: "Asia/Kolkata",
-      theme: "dark",
-      style: "1",
+      symbols: [
+        [
+          `NSE:${symbol}|1D`,
+        ],
+      ],
+      chartOnly: false,
+      width: "100%",
+      height: "100%",
       locale: "en",
-      hide_top_toolbar: true,
-      hide_legend: false,
-      allow_symbol_change: false,
+      colorTheme: "dark",
+      autosize: true,
+      showVolume: false,
+      showMA: false,
+      hideDateRanges: false,
+      hideMarketStatus: false,
+      hideSymbolLogo: false,
+      scalePosition: "right",
+      scaleMode: "Normal",
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+      fontSize: "10",
+      noTimeScale: false,
+      valuesTracking: "1",
+      changeMode: "price-and-percent",
+      chartType: "candlesticks",
+      lineWidth: 2,
       backgroundColor: "#111827",
-      gridColor: "rgba(255,255,255,0.05)",
-      save_image: false,
+      gridLineColor:
+        "rgba(255,255,255,0.05)",
     });
 
-    containerRef.current?.appendChild(script);
+    containerRef.current.appendChild(script);
 
-  }, [symbol, interval]);
+  }, [symbol]);
 
   return (
-    <div className="w-full h-full">
-      <div
-        className="tradingview-widget-container h-full"
-        ref={containerRef}
-      />
-    </div>
+    
+        <div className="w-full h-full">
+          <div
+            ref={containerRef}
+            className="tradingview-widget-container w-full h-full min-h-[500px]"
+          />
+        </div>
+      
   );
 }
