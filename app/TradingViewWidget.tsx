@@ -10,7 +10,7 @@ declare global {
 
 interface Props {
   symbol: string;
-  interval: string;
+  
 }
 
 export default function TradingViewWidget({

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-//import TradingViewWidget from "./TradingViewWidget";
+import TradingViewWidget from "./TradingViewWidget";
 
 import {
   Search,
@@ -300,7 +300,9 @@ export default function Home() {
 
             <div className="h-full rounded-2xl overflow-hidden border border-white/5 bg-[#111827]">
 
-            <div className="w-full h-full flex items-center justify-center bg-[#111827]">
+            <TradingViewWidget
+            symbol={selectedSymbol.tradingview}
+            />
 
 <div className="text-center">
 
@@ -555,10 +557,11 @@ export default function Home() {
 
           </div>
 
-        </div>
+          </section>
+          
+          </main>
+      
 
-      </section>
-
-    </main>
+    
   );
 }
